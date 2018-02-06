@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : Weight and delta calculation
+// Module Name   : calculate_weight_and_delta
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		Calculates new weight and delta in backpropagation process
+// 
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module calculate_weight_and_delta(clk,enable_write_w,enable_delta,enable_calc_delta,save_a,
 delta1,delta2,delta3,delta4,delta5,delta6,delta7,delta8,delta9,delta10,delta11,delta12,delta13,delta14,delta15,delta16,
 BRAM_out1,BRAM_out2,BRAM_out3,BRAM_out4,BRAM_out5,BRAM_out6,BRAM_out7,BRAM_out8,BRAM_out9,BRAM_out10,BRAM_out11,BRAM_out12,BRAM_out13,BRAM_out14,BRAM_out15,BRAM_out16,
