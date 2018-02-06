@@ -97,7 +97,6 @@ reg [3:0] counter_G;
 reg [15:0] counter_K;
 reg [15:0] mask;
 reg [5:0] counter_M;
-reg [15:0] counter_itr = 16'b0000000000000000;
 
 
 reg [5:0] state = 6'b000000;
@@ -143,7 +142,6 @@ parameter SB6_1		= 6'b011110;
 parameter SB6_2		= 6'b011111;
 parameter SB7_1		= 6'b100000;
 parameter SB7_2		= 6'b100001;
-parameter SB8       = 6'b100010;
 
 
 //State Transition
@@ -258,10 +256,7 @@ always @(*) begin
 			next_state=(counter==2'b11) ? SB7_2 : SB7_1;
 		end
 		SB7_2: begin
-			next_state=(counter==2'b11) ? ((counter_M==6'b111111)? SB8 : SB7_1) : SB7_2;
-		end
-		SB8  : begin
-			next_state=(counter==2'b11) ? S1 : SB8;
+			next_state=(counter==2'b11) ? ((counter_M==6'b111111)? S1 : SB7_1) : SB7_2;
 		end
 		default : begin
 			next_state = S1;
@@ -277,7 +272,6 @@ always @(posedge clk) begin
 		counter_K	<= 16'b0000000000000000;
 		counter_M	<= 6'b111111;
 		address_2   <= 13'b0000000000000;
-		counter_itr <= 16'b0000000000000000;
 	end
 	else 
 	begin
@@ -355,13 +349,6 @@ always @(posedge clk) begin
 			address_1		<= 10'b1010000000;
 		end
 		
-		// Iteration counter
-		if ((state==S1) && (next_state==S2_bias) && (train)) begin
-			if (counter_itr >= iteration_cplt)
-				counter_itr <= 16'b0000000000000000;
-			else
-				counter_itr	<= counter_itr + 1;
-		end
 		
 		if (state==S1) begin
 			counter_G 	<= 4'b1111;
@@ -444,7 +431,7 @@ always @(posedge clk) begin
 			address_1 <= address_1+1;
 		end
 		
-		else if ((state==SB7_2)&&(next_state==SB8)) begin
+		else if ((state==SB7_2)&&(next_state==S1)) begin
 			counter_K <= 16'b0000000000000000;
 			counter_G <= 4'b1111;
 			counter_M <= 6'b111111;
@@ -1328,7 +1315,7 @@ always @(state, train) begin
 		enable_rounding <= 1'b0;
 		selector_z_in   <= 1'b0;
 		selector_l		<= 1'b0;
-		finish			<= 1'b0;
+		finish			<= 1'b1;
 		
 		
 		enable_BRAM1 	<= 16'b1111111111111111;
@@ -1344,31 +1331,6 @@ always @(state, train) begin
 		sel_hs 			<= 1;
 		sel_BRAM_in 	<= 2'b10;
 		sel_a_or_k 		<= 1;
-		en_k_reg 		<= 0;
-		enable_supervisor <= 0;
-	end
-	SB8: begin
-		enable_b		<= 1'b0;
-		enable_z		<= 2'b00;
-		enable_a		<= 1'b0;
-		enable_rounding <= 1'b0;
-		selector_z_in   <= 1'b0;
-		selector_l		<= 1'b0;
-		finish			<= (counter_itr==16'b0000000000000000) ? 1'b1 : 1'b0 ;
-		
-		enable_BRAM1 	<= 16'b0000000000000000;
-		enable_BRAM2 	<= 0;
-		we_BRAM1 		<= 16'b0000000000000000;
-		enable_read_a 	<= 0;
-		enable_write_w 	<= 0;
-		enable_delta 	<= 0;
-		en_save_delta 	<= 0;
-		en_b_back 		<= 0;
-		en_delta3 		<= 0;
-		en_cost 		<= 0;
-		sel_hs 			<= 0;
-		sel_BRAM_in 	<= 2'b00;
-		sel_a_or_k 		<= 0;
 		en_k_reg 		<= 0;
 		enable_supervisor <= 0;
 	end
@@ -1396,6 +1358,7 @@ always @(state, train) begin
 		sel_a_or_k 		<= 0;
 		en_k_reg 		<= 0;
 		enable_supervisor <= 0;
+		
 	end
 	
 	

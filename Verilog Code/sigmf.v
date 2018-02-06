@@ -13,15 +13,10 @@
 // Description: 
 // 		Calculation sigmoid function as the activation function for neural network
 // 
-// Input:
-//  	in : 16 bits 00_0000.0000_0000_00 signed : input value of activation function (sigmoid)
-//
-// Output:
-//  	out: 16 bits 00_0000.0000_0000_00 signed : calculation result for activation function (sigmoid)
 //
 // Revision: 
 // Revision 0.01 - File Created
-// Additional Comments: Based on MacClaurin Series with 4 Terms. Max error achieved is 0.0025
+// Additional Comments: Based on MacClaurin Series with 3 Terms.
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 

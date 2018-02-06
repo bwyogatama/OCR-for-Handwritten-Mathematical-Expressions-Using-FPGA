@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Institution   : Bandung Institute of Technology
-// Engineer      : Jhonson Lee
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
 //
 // Create Date   : 11/14/2017 
 // Design Name   : Activation Function using Sigmoid 
 // Module Name   : actf
 // Project Name  : LSI Design Contest in Okinawa 2018
-// Target Devices: Sigmoid Function
-// Tool versions : FPGA
+// Target Devices: Zynq 7000
+// Tool versions : Vivado 2016.4
 //
 // Description: 
 // 		Performing addition for 4 input values
@@ -41,10 +41,5 @@ wire signed [DWIDTH-1:0] temp;
 
 sigmf sigmoid_function(in, temp);
 Dflipflop Dflop(.clk(clk),.reset(reset),.in(temp),.enable(en),.out(out));
-
-//always@(posedge clk)
-//begin
-//  if (en) out <= temp; else out <= 16'bz;
-//end
 
 endmodule

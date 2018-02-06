@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Institution   : Bandung Institute of Technology
-// Engineer      : Jhonson Lee
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
 //
 // Create Date   : 11/14/2017 
-// Design Name   : Adder for 4 input values 
 // Module Name   : adder_4in
 // Project Name  : LSI Design Contest in Okinawa 2018
 // Target Devices: Sigmoid Function
-// Tool versions : FPGA
+// Tool versions : Vivado 2016.4
 //
 // Description: 
 // 		Performing addition for 4 input values

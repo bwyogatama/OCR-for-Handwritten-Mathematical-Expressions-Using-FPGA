@@ -1,0 +1,7 @@
+add_force {/feedforwardnet/clk} -radix bin {0 0ns} {1 50000ps} -repeat_every 100000ps
+add_force {/feedforwardnet/arm} -radix bin {0 0ns}
+add_force {/feedforwardnet/reset} -radix bin {1 0ns}
+add_force {/feedforwardnet/train} -radix bin {1 0ns}
+add_force {/feedforwardnet/stop} -radix hex {0 0ns}
+add_force {/feedforwardnet/image} -radix hex {0FFC19C3E7E7C01FF 0ns}
+add_force {/feedforwardnet/iteration_cplt} -radix hex {2 0ns}

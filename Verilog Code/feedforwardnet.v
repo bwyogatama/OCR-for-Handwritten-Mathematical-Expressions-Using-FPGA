@@ -1,3 +1,50 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : Feedforward Network 
+// Module Name   : feedforwardnet
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		High Level Module for Forward and Backpropagation Neural Networks
+// 
+// %GENERAL PORTS%
+// Input:
+//  	clk   : 1 bit  : clock signal
+//  	reset : 1 bit  : high priority reset signal
+//  	image : 64 bit : Input image in form of 64-bit data
+//      arm   : 1 bit  : Command signal
+//      train : 1 bit  : Signal for mode of operation
+//      finish: 1 bit  : Signal indicating the end of identification or training process 
+//      stop  : 1 bit  : Command signal to halt training operation
+//      iteration_cplt : 16 bit : Data indicating number of images in training dataset
+//
+// Output:
+//      result: 16 bit : Identification result
+//      cost  : 32 bit : Cost function value for training performance analysis
+//
+// %SPECIAL PORTS%
+// Input: 
+// 		PS_addr: 32 bit : Address input
+// 		PS_clk : 1 bit  : Clock signal from processing system
+// 		PS_din : 32 bit : Input data for write operation
+// 		PS_en  : 1 bit  : Enable signal
+// 		PS_rst : 1 bit  : High priority reset signal from processing system
+// 		PS_we  : 4 bit  : Write enable signal
+//
+// Output:
+//      PS_dout: 32 bit : Data for read operation
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module feedforwardnet
 	  (clk,
 	   reset,
@@ -51,8 +98,6 @@ input PS_en;
 input [0:0] PS_rst;
 input [3:0] PS_we;
 
-//wire signed [DWIDTH-1:0] a [15:0];
-
 wire [AWIDTH-1:0] address;
 wire [12:0] dataset_addr;
 wire signed [DWIDTH-1:0] BRAM1_in [15:0];
@@ -90,21 +135,7 @@ wire PS_en;
 wire [15:0] PS_en_in;
 wire [0:0] PS_rst;
 wire [3:0] PS_we;
-//////////////////////////////////////////
-/*
-wire [0:0] in_conv;
-wire [DWIDTH-1:0] k_conv;
-wire [0:0] enable_b;
-wire [1:0] enable_z; 
-wire [0:0] enable_a; 
-wire enable_rounding; 
-wire [5:0] selector_input; 
-wire [3:0] selector_a; 
-wire [0:0] selector_z_in; 
-//wire [AWIDTH-1:0] address;
-wire [15:0] enable_BRAM1; 
-wire [15:0] we_BRAM1;
-wire signed [DWIDTH-1:0] BRAM1_out[15:0];*/
+
 
 wire signed [DWIDTH-1:0] z [15:0];
 wire signed [DWIDTH-1:0] a [15:0];
@@ -135,12 +166,12 @@ wire [0:0] selector_z_in;
 
 wire [3:0] t;
 
+//////////////////////////////////////////////
+/////				   
+/////	CONTROL UNIT
+/////
+//////////////////////////////////////////////
 
-
-//wire signed [DWIDTH-1:0] tap_weight1,tap_weight2,tap_weight3,tap_weight4,tap_weight5,tap_weight6,tap_weight7,tap_weight8,tap_weight9,tap_weight10,tap_weight11,tap_weight12,tap_weight13,tap_weight14,tap_weight15,tap_weight16;
-//wire signed [DWIDTH-1:0] tap_delt;
-
-//control_unit cu(.clk(clk),.reset(reset),.train(train),.iteration_cplt(iteration_cplt),.enable_read_a(enable_read_a),.enable_write_w(enable_write_w),.enable_delta(enable_delta),.enable_calc_delta(enable_calc_delta),.sel_a_select(sel_a_select),.select_k(select_k),.sel_a_or_k(sel_a_or_k),.en_k_reg(en_k_reg),.en_save_delta(en_save_delta),.en_b_back(en_b_back),.enable_supervisor(enable_supervisor),.en_delta3(en_delta3),.en_cost(en_cost),.enable_BRAM1(enable_BRAM1),.enable_BRAM2(enable_BRAM2),.we_BRAM1(we_BRAM1),.we_BRAM2(we_BRAM2),.sel_hs(sel_hs),.sel_BRAM_in(sel_BRAM_in),.address_1(address),.address_2(dataset_addr));
 control_unit CU
 	(.clk(clk),
      .reset(reset),
@@ -194,7 +225,14 @@ ROM Dataset_Storage
    .douta({t,dataset_data}));
 
 mux2to1_64bit mux_first(.in1(image),.in2(dataset_data),.sel(train),.out(i_or_d));
+
 Dflipflopbp64 Dflip_first(.clk(clk),.in(i_or_d),.enable(en_k_reg),.out(k));
+
+//////////////////////////////////////////////
+/////				   
+/////	RAM FOR NEURAL NETWORKS PARAMETERS
+/////
+//////////////////////////////////////////////
 
 BRAM_0 BRAM_row0(.BRAM_PORTA_addr(address),.BRAM_PORTA_clk(clk),.BRAM_PORTA_din(BRAM1_in[0]),.BRAM_PORTA_dout(BRAM1_out[0]),.BRAM_PORTA_en(enable_BRAM1[0]),.BRAM_PORTA_we(we_BRAM1[0]),.BRAM_PORTA_rst(reset),
                  .BRAM_PORTB_addr(PS_addr_in),.BRAM_PORTB_clk(PS_clk),.BRAM_PORTB_din(PS_din),.BRAM_PORTB_dout(PS_dout_in[0]),.BRAM_PORTB_en(PS_en_in[0]),.BRAM_PORTB_we(PS_we),.BRAM_PORTB_rst(PS_rst));
@@ -229,9 +267,10 @@ BRAM_14 BRAM_row14(.BRAM_PORTA_addr(address),.BRAM_PORTA_clk(clk),.BRAM_PORTA_di
 BRAM_15 BRAM_row15(.BRAM_PORTA_addr(address),.BRAM_PORTA_clk(clk),.BRAM_PORTA_din(BRAM1_in[15]),.BRAM_PORTA_dout(BRAM1_out[15]),.BRAM_PORTA_en(enable_BRAM1[15]),.BRAM_PORTA_we(we_BRAM1[15]),.BRAM_PORTA_rst(reset),
                    .BRAM_PORTB_addr(PS_addr_in),.BRAM_PORTB_clk(PS_clk),.BRAM_PORTB_din(PS_din),.BRAM_PORTB_dout(PS_dout_in[15]),.BRAM_PORTB_en(PS_en_in[15]),.BRAM_PORTB_we(PS_we),.BRAM_PORTB_rst(PS_rst));
 
+				   
 //////////////////////////////////////////////
 /////				   
-/////	FORWARD SYSTEM
+/////	FORWARD
 /////
 //////////////////////////////////////////////				   
 				   
@@ -362,11 +401,9 @@ rounding round_16(.in(a[15]),.reset(reset),.en(enable_rounding),.out(result[15])
 				   			   
 //////////////////////////////////////////////
 /////				   
-/////	BACKPROPAGATION SYSTEM
+/////	BACKPROPAGATION 
 /////
 //////////////////////////////////////////////
-		
-
 		
 mux16to1_16bit mux_16_t(.in1(16'b0000000000000001),.in2(16'b0000000000000010),.in3(16'b0000000000000100),.in4(16'b0000000000001000),.in5(16'b0000000000010000),.in6(16'b0000000000100000),.in7(16'b0000000001000000),.in8(16'b0000000010000000),.in9(16'b0000000100000000),.in10(16'b0000001000000000),.in11(16'b0000010000000000),.in12(16'b0000100000000000),.in13(16'b0001000000000000),.in14(16'b0010000000000000),.in15(16'b0100000000000000),.in16(16'b1000000000000000),.sel(t),.out(t_16bit));
 
@@ -404,8 +441,6 @@ Dflipflopbp Dflip46(.clk(clk),.in(t_conv[13]),.enable(enable_supervisor),.out(t_
 Dflipflopbp Dflip47(.clk(clk),.in(t_conv[14]),.enable(enable_supervisor),.out(t_save[14]));
 Dflipflopbp Dflip48(.clk(clk),.in(t_conv[15]),.enable(enable_supervisor),.out(t_save[15]));
 
-
-
 calculate_delta3 calc_delta3_1(.clk(clk),.a3(a[0]),.t(t_save[0]),.en_delta3(en_delta3),.en_cost(en_cost),.delta3(delta3[0]),.cost(cost_1));
 calculate_delta3 calc_delta3_2(.clk(clk),.a3(a[1]),.t(t_save[1]),.en_delta3(en_delta3),.en_cost(en_cost),.delta3(delta3[1]),.cost(cost_2));
 calculate_delta3 calc_delta3_3(.clk(clk),.a3(a[2]),.t(t_save[2]),.en_delta3(en_delta3),.en_cost(en_cost),.delta3(delta3[2]),.cost(cost_3));
@@ -424,7 +459,6 @@ calculate_delta3 calc_delta3_15(.clk(clk),.a3(a[14]),.t(t_save[14]),.en_delta3(e
 calculate_delta3 calc_delta3_16(.clk(clk),.a3(a[15]),.t(t_save[15]),.en_delta3(en_delta3),.en_cost(en_cost),.delta3(delta3[15]),.cost(cost_16));
 
 adder16 add16(.in1(cost_1),.in2(cost_2),.in3(cost_3),.in4(cost_4),.in5(cost_5),.in6(cost_6),.in7(cost_7),.in8(cost_8),.in9(cost_9),.in10(cost_10),.in11(cost_11),.in12(cost_12),.in13(cost_13),.in14(cost_14),.in15(cost_15),.in16(cost_16),.out(cost));
-
 
 calculate_bias calc_bias_1(.clk(clk),.delta(mux_in[0]),.BRAM_out(BRAM1_out[0]),.en_b_back(en_b_back),.new_bias(new_bias[0]));
 calculate_bias calc_bias_2(.clk(clk),.delta(mux_in[1]),.BRAM_out(BRAM1_out[1]),.en_b_back(en_b_back),.new_bias(new_bias[1]));
@@ -466,7 +500,7 @@ mux64 mux64(.in(k),.sel(select_k),.out(k_selected));
 
 convert_k conv_k(.in(k_selected),.k(k_convert));
 
-mux2 mux2(.in1(k_convert),.in2(save_a_selected),.sel(sel_a_or_k),.out(a_or_k_selected));
+mux2 mux2(.in1(k_convert),.in2(save_a_selected),.sel(~sel_a_or_k),.out(a_or_k_selected));
 
 calculate_weight_and_delta cwd(.clk(clk),.enable_write_w(enable_write_w),.enable_delta(enable_delta),.enable_calc_delta(enable_calc_delta),.save_a(a_or_k_selected),
 .delta1(mux_in[0]),.delta2(mux_in[1]),.delta3(mux_in[2]),.delta4(mux_in[3]),.delta5(mux_in[4]),.delta6(mux_in[5]),.delta7(mux_in[6]),.delta8(mux_in[7]),.delta9(mux_in[8]),.delta10(mux_in[9]),.delta11(mux_in[10]),.delta12(mux_in[11]),.delta13(mux_in[12]),.delta14(mux_in[13]),.delta15(mux_in[14]),.delta16(mux_in[15]),
@@ -474,22 +508,22 @@ calculate_weight_and_delta cwd(.clk(clk),.enable_write_w(enable_write_w),.enable
 .write_weight1(new_weight[0]),.write_weight2(new_weight[1]),.write_weight3(new_weight[2]),.write_weight4(new_weight[3]),.write_weight5(new_weight[4]),.write_weight6(new_weight[5]),.write_weight7(new_weight[6]),.write_weight8(new_weight[7]),.write_weight9(new_weight[8]),.write_weight10(new_weight[9]),.write_weight11(new_weight[10]),.write_weight12(new_weight[11]),.write_weight13(new_weight[12]),.write_weight14(new_weight[13]),.write_weight15(new_weight[14]),.write_weight16(new_weight[15]),
 .next_delta1(save_delta[0]),.next_delta2(save_delta[1]),.next_delta3(save_delta[2]),.next_delta4(save_delta[3]),.next_delta5(save_delta[4]),.next_delta6(save_delta[5]),.next_delta7(save_delta[6]),.next_delta8(save_delta[7]),.next_delta9(save_delta[8]),.next_delta10(save_delta[9]),.next_delta11(save_delta[10]),.next_delta12(save_delta[11]),.next_delta13(save_delta[12]),.next_delta14(save_delta[13]),.next_delta15(save_delta[14]),.next_delta16(save_delta[15]));
 
-mux2 mux_in_1(.in1(next_delta[0]),.in2(delta3[0]),.sel(sel_hs),.out(mux_in[0]));
-mux2 mux_in_2(.in1(next_delta[1]),.in2(delta3[1]),.sel(sel_hs),.out(mux_in[1]));
-mux2 mux_in_3(.in1(next_delta[2]),.in2(delta3[2]),.sel(sel_hs),.out(mux_in[2]));
-mux2 mux_in_4(.in1(next_delta[3]),.in2(delta3[3]),.sel(sel_hs),.out(mux_in[3]));
-mux2 mux_in_5(.in1(next_delta[4]),.in2(delta3[4]),.sel(sel_hs),.out(mux_in[4]));
-mux2 mux_in_6(.in1(next_delta[5]),.in2(delta3[5]),.sel(sel_hs),.out(mux_in[5]));
-mux2 mux_in_7(.in1(next_delta[6]),.in2(delta3[6]),.sel(sel_hs),.out(mux_in[6]));
-mux2 mux_in_8(.in1(next_delta[7]),.in2(delta3[7]),.sel(sel_hs),.out(mux_in[7]));
-mux2 mux_in_9(.in1(next_delta[8]),.in2(delta3[8]),.sel(sel_hs),.out(mux_in[8]));
-mux2 mux_in_10(.in1(next_delta[9]),.in2(delta3[9]),.sel(sel_hs),.out(mux_in[9]));
-mux2 mux_in_11(.in1(next_delta[10]),.in2(delta3[10]),.sel(sel_hs),.out(mux_in[10]));
-mux2 mux_in_12(.in1(next_delta[11]),.in2(delta3[11]),.sel(sel_hs),.out(mux_in[11]));
-mux2 mux_in_13(.in1(next_delta[12]),.in2(delta3[12]),.sel(sel_hs),.out(mux_in[12]));
-mux2 mux_in_14(.in1(next_delta[13]),.in2(delta3[13]),.sel(sel_hs),.out(mux_in[13]));
-mux2 mux_in_15(.in1(next_delta[14]),.in2(delta3[14]),.sel(sel_hs),.out(mux_in[14]));
-mux2 mux_in_16(.in1(next_delta[15]),.in2(delta3[15]),.sel(sel_hs),.out(mux_in[15]));
+mux2 mux_in_1(.in1(next_delta[0]),.in2(delta3[0]),.sel(~sel_hs),.out(mux_in[0]));
+mux2 mux_in_2(.in1(next_delta[1]),.in2(delta3[1]),.sel(~sel_hs),.out(mux_in[1]));
+mux2 mux_in_3(.in1(next_delta[2]),.in2(delta3[2]),.sel(~sel_hs),.out(mux_in[2]));
+mux2 mux_in_4(.in1(next_delta[3]),.in2(delta3[3]),.sel(~sel_hs),.out(mux_in[3]));
+mux2 mux_in_5(.in1(next_delta[4]),.in2(delta3[4]),.sel(~sel_hs),.out(mux_in[4]));
+mux2 mux_in_6(.in1(next_delta[5]),.in2(delta3[5]),.sel(~sel_hs),.out(mux_in[5]));
+mux2 mux_in_7(.in1(next_delta[6]),.in2(delta3[6]),.sel(~sel_hs),.out(mux_in[6]));
+mux2 mux_in_8(.in1(next_delta[7]),.in2(delta3[7]),.sel(~sel_hs),.out(mux_in[7]));
+mux2 mux_in_9(.in1(next_delta[8]),.in2(delta3[8]),.sel(~sel_hs),.out(mux_in[8]));
+mux2 mux_in_10(.in1(next_delta[9]),.in2(delta3[9]),.sel(~sel_hs),.out(mux_in[9]));
+mux2 mux_in_11(.in1(next_delta[10]),.in2(delta3[10]),.sel(~sel_hs),.out(mux_in[10]));
+mux2 mux_in_12(.in1(next_delta[11]),.in2(delta3[11]),.sel(~sel_hs),.out(mux_in[11]));
+mux2 mux_in_13(.in1(next_delta[12]),.in2(delta3[12]),.sel(~sel_hs),.out(mux_in[12]));
+mux2 mux_in_14(.in1(next_delta[13]),.in2(delta3[13]),.sel(~sel_hs),.out(mux_in[13]));
+mux2 mux_in_15(.in1(next_delta[14]),.in2(delta3[14]),.sel(~sel_hs),.out(mux_in[14]));
+mux2 mux_in_16(.in1(next_delta[15]),.in2(delta3[15]),.sel(~sel_hs),.out(mux_in[15]));
 
 Dflipflopbp Dflip1(.clk(clk),.in(save_delta[0]),.enable(en_save_delta),.out(next_delta[0]));
 Dflipflopbp Dflip2(.clk(clk),.in(save_delta[1]),.enable(en_save_delta),.out(next_delta[1]));
@@ -508,7 +542,6 @@ Dflipflopbp Dflip14(.clk(clk),.in(save_delta[13]),.enable(en_save_delta),.out(ne
 Dflipflopbp Dflip15(.clk(clk),.in(save_delta[14]),.enable(en_save_delta),.out(next_delta[14]));
 Dflipflopbp Dflip16(.clk(clk),.in(save_delta[15]),.enable(en_save_delta),.out(next_delta[15]));
 
-
 mux4to1_32bit mux_BRAM_1(.in1(a[0]),.in2(new_bias[0]),.in3(new_weight[0]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[0]));
 mux4to1_32bit mux_BRAM_2(.in1(a[1]),.in2(new_bias[1]),.in3(new_weight[1]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[1]));
 mux4to1_32bit mux_BRAM_3(.in1(a[2]),.in2(new_bias[2]),.in3(new_weight[2]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[2]));
@@ -525,9 +558,5 @@ mux4to1_32bit mux_BRAM_13(.in1(a[12]),.in2(new_bias[12]),.in3(new_weight[12]),.i
 mux4to1_32bit mux_BRAM_14(.in1(a[13]),.in2(new_bias[13]),.in3(new_weight[13]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[13]));
 mux4to1_32bit mux_BRAM_15(.in1(a[14]),.in2(new_bias[14]),.in3(new_weight[14]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[14]));
 mux4to1_32bit mux_BRAM_16(.in1(a[15]),.in2(new_bias[15]),.in3(new_weight[15]),.in4(32'h00000000),.sel(sel_BRAM_in),.out(BRAM1_in[15]));
-
-
-
-
 
 endmodule

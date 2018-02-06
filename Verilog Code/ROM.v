@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : Read Only Memory for Dataset Images
+// Module Name   : ROM
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		Read Only Memory design for saving dataset images 
+// 
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 `timescale 1ns/1ps
 
 module ROM (

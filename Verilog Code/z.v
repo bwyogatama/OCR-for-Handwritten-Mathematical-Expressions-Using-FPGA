@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : Z calculation 
+// Module Name   : z
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		Conducting z value calculation before going into activation function
+// 
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module z(clk,reset,k,sel,enable_out,enable_prev,in_BRAM,out);
 
 parameter DWIDTH=32;							

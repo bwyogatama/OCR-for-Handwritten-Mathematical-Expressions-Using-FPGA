@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : Multiplexer for selecting input pixels
+// Module Name   : mux64
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		64to1 mux to select a pixel to be processed in one cycle 
+// 
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module mux64 (in,sel,out);
 
 parameter DWIDTH=16;

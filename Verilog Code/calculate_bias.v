@@ -1,3 +1,24 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
+//
+// Create Date   : 31/1/2018 
+// Design Name   : bias calculation
+// Module Name   : calculate_bias
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Zynq 7000
+// Tool versions : Vivado v.2016.4
+//
+// Description: 
+// 		calculates bias for each layer
+// 
+//
+// Revision: 
+// Revision 0.01 - File Created
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module calculate_bias(clk,delta,BRAM_out,en_b_back,new_bias);
 
 parameter DWIDTH=32;							

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Institution   : Bandung Institute of Technology
-// Engineer      : Jhonson Lee
+// Engineer      : Jhonson Lee, Bobbi W. Yogatama, Hans Christian
 //
 // Create Date   : 11/14/2017 
 // Design Name   : Lookup Table for First Term Coeficient in MacClaurin Series
