@@ -1,0 +1,8 @@
+create_clock -period 40.000 -name {PS_clk[0]} -waveform {0.000 20.000} [get_ports {PS_clk[0]}]
+create_clock -period 40.000 -name clk -waveform {0.000 20.000} [get_ports clk]
+create_generated_clock -name {CU/state[0]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[0]/Q}]
+create_generated_clock -name {CU/state[1]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[1]/Q}]
+create_generated_clock -name {CU/state[2]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[2]/Q}]
+create_generated_clock -name {CU/state[3]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[3]/Q}]
+create_generated_clock -name {CU/state[4]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[4]/Q}]
+create_generated_clock -name {CU/state[5]} -source [get_ports clk] -divide_by 1 [get_pins {CU/state_reg[5]/Q}]
