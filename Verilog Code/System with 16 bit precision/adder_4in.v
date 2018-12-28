@@ -1,0 +1,38 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Institution   : Bandung Institute of Technology
+// Engineer      : Jhonson Lee
+//
+// Create Date   : 11/14/2017 
+// Design Name   : Adder for 4 input values 
+// Module Name   : adder_4in
+// Project Name  : LSI Design Contest in Okinawa 2018
+// Target Devices: Sigmoid Function
+// Tool versions : FPGA
+//
+// Description: 
+// 		Performing addition for 4 input values
+// 
+// Input:
+//  	A : 16 bit signed : First Value
+//  	B : 16 bit signed : Second Value 
+//  	C : 16 bit signed : Third Value 
+//  	D : 16 bit signed : Fourth Value 
+//
+// Output:
+//  	out : 16 bit signed : Result 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: Addtion using operator +
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+module adder_4in(A, B, C, out);
+
+input signed [15:0] A, B, C;
+output signed [15:0] out;
+
+assign out = A + B + C;
+
+endmodule
